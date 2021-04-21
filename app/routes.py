@@ -38,7 +38,7 @@ def add():
 
     return "of the jedi"
 
-@app.route('/update/<int:id>')
+@app.route('/update/<int:id>', methods=['GET'])
 def updateRoute(id):
     if not id or id != 0:
         entry = Entry.query.get(id)
@@ -47,14 +47,20 @@ def updateRoute(id):
 
     return "of the jedi"
 
-@app.route('/update', methods=['POST'])
-def update():
-    if not id or id != 0:
-        entry = Entry.query.get(id)
-        if entry:
-            db.session.delete(entry)
-            db.session.commit()
-        return redirect('/')
+@app.route('/update/<int:id>', methods=['POST'])
+def update(id):
+    if request.method == 'POST':
+        form = request.form
+        title = form.get('title')
+        description = form.get('description')
+        if not title or description:
+            if not id or id != 0:
+                entry = Entry.query.get(id)
+                if entry:
+                    entry.title = title
+                    entry.description = description
+                    db.session.commit()
+                    return redirect('/')
 
     return "of the jedi"
 
